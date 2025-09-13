@@ -1,24 +1,24 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+// app/_layout.tsx
+import { Drawer } from 'expo-router/drawer';
+import { CountersProvider } from '../components/CountersContext';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
+export default function Layout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <CountersProvider>
+      <Drawer
+        screenOptions={{
+          drawerStyle: { backgroundColor: '#1E1E1E', width: 240 }, // sfondo drawer scuro
+          drawerActiveTintColor: '#4caf50', // elemento attivo verde
+          drawerInactiveTintColor: '#CCCCCC', // testo inattivo grigio chiaro
+          headerTitleAlign: 'center',
+          headerStyle: { backgroundColor: '#121212' }, // header nero
+          headerTintColor: '#FFFFFF', // testo header bianco
+        }}
+      >
+        <Drawer.Screen name="index" options={{ title: "Home" }} />
+        <Drawer.Screen name="sigarette" options={{ title: "Sigarette" }} />
+        <Drawer.Screen name="caffe" options={{ title: "Caffè" }} />
+      </Drawer>
+    </CountersProvider>
   );
 }
