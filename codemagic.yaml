@@ -1,18 +1,26 @@
 workflows:
   ios-build:
-    name: iOS Build (Expo EAS)
+    name: iOS Build
     environment:
       node: 20
-      npm: default
+      npm: 10.7.0   # ✅ versione stabile, niente "default"
+      xcode: 16.4
       vars:
-        EXPO_TOKEN: $EXPO_TOKEN
+        EXPO_TOKEN: $EXPO_TOKEN  # lo setti nei secrets di Codemagic
+
     scripts:
+      # 1. Installa EAS CLI globalmente
+      - name: Install EAS CLI
+        script: npm install -g eas-cli
+
+      # 2. Installa le dipendenze del progetto
       - name: Install dependencies
-        script: |
-          npm install -g eas-cli
-          npm install
-      - name: Build iOS app
+        script: npm install
+
+      # 3. Build iOS IPA con Expo EAS
+      - name: Build iOS App
         script: |
           eas build --platform ios --profile development --non-interactive
+
     artifacts:
-      - '**/*.ipa'
+      - '**/*.ipa'   # ✅ salva l’IPA come artifact scaricabile
