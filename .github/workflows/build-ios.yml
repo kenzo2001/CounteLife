@@ -32,7 +32,7 @@ jobs:
         run: eas login --non-interactive --username ${{ secrets.EXPO_USERNAME }} --password ${{ secrets.EXPO_PASSWORD }}
 
       # 6. Configura il progetto EAS (crea eas.json se manca)
-      - name: Configure EAS Build
+      - name: Configure EAS Build 
         run: eas build:configure
 
       # 7. Build iOS Development Client
