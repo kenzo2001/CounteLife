@@ -3,13 +3,11 @@ name: Build iOS IPA
 on:
   push:
     branches:
-      - master   # o il branch che usi
+      - master   # usa "master" se non hai main
 
 jobs:
   build-ios:
     runs-on: ubuntu-latest
-    env:
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }} # Token Expo dal tuo account
 
     steps:
       # 1. Checkout del codice
@@ -25,15 +23,15 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
-      # 4. Installazione dipendenze progetto
+      # 4. Installazione dipendenze del progetto
       - name: Install dependencies
         run: npm install
 
-      # 5. Configura il progetto EAS (crea eas.json se manca)
-      - name: Configure EAS Build
-        run: eas build:configure
+      # 5. Login su Expo tramite token (senza prompt)
+      - name: Login to Expo
+        run: eas login --token ${{ secrets.EXPO_TOKEN }}
 
-      # 6. Build iOS Development Client
+      # 6. Build iOS Development Client usando profilo "development"
       - name: Build iOS Development Client
         run: eas build --platform ios --profile development --non-interactive
 
