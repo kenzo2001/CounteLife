@@ -3,11 +3,13 @@ name: Build iOS IPA
 on:
   push:
     branches:
-      - master  # o main se cambi il branch
+      - master   # o il branch che usi
 
 jobs:
   build-ios:
     runs-on: ubuntu-latest
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }} # Token Expo dal tuo account
 
     steps:
       # 1. Checkout del codice
@@ -23,23 +25,19 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
-      # 4. Installazione dipendenze del progetto
+      # 4. Installazione dipendenze progetto
       - name: Install dependencies
         run: npm install
 
-      # 5. Login su Expo tramite token
-      - name: Login to Expo
-        run: eas login --token ${{ secrets.EXPO_TOKEN }}
-
-      # 6. Configura il progetto EAS (crea eas.json se manca)
+      # 5. Configura il progetto EAS (crea eas.json se manca)
       - name: Configure EAS Build
         run: eas build:configure
 
-      # 7. Build iOS Development Client
+      # 6. Build iOS Development Client
       - name: Build iOS Development Client
         run: eas build --platform ios --profile development --non-interactive
 
-      # 8. Salvataggio IPA come artifact (aggiornato alla nuova versione)
+      # 7. Salvataggio IPA come artifact
       - name: Upload IPA as Artifact
         uses: actions/upload-artifact@v4
         with:
