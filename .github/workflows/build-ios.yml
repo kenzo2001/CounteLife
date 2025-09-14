@@ -1,9 +1,10 @@
 name: Build iOS IPA
 
 on:
+  workflow_dispatch:      # permette di far partire manualmente il workflow
   push:
     branches:
-      - main
+      - master            # branch principale corretto
 
 jobs:
   build-ios:
