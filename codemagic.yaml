@@ -6,7 +6,7 @@ workflows:
       npm: 10.7.0
       xcode: 16.4
       groups:
-        - expo_credentials  # gruppo che contiene EXPO_TOKEN
+        - expo  # <-- qui specifichi il tuo gruppo expo
 
     scripts:
       - name: Install EAS CLI
