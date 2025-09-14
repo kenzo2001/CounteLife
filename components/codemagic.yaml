@@ -1,0 +1,18 @@
+workflows:
+  ios-build:
+    name: iOS Build (Expo EAS)
+    environment:
+      vars:
+        EXPO_TOKEN: Encrypted(...) # lo metterai nei Secrets di Codemagic
+      node: 20
+      npm: default
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm install -g eas-cli
+          npm install
+      - name: Build iOS app
+        script: |
+          eas build --platform ios --profile development --non-interactive
+    artifacts:
+      - '**/*.ipa'
