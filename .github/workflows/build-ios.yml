@@ -42,7 +42,7 @@ jobs:
 
       # 8. Salvataggio IPA come artifact
       - name: Upload IPA as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: LifeCounters-IPA
           path: '**/*.ipa'
