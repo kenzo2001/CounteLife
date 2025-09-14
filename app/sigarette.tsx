@@ -9,7 +9,7 @@ const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 type Props = { goBack: () => void };
 
 export default function Sigarette({ goBack }: Props) {
-  const { counters, setCounters } = useContext(CountersContext);
+  const { counters, updateCounter } = useContext(CountersContext);
   const counter = counters.find(c => c.label === 'Sigarette') as Counter;
 
   const [value, setValue] = useState(counter?.value || 0);
@@ -23,7 +23,11 @@ export default function Sigarette({ goBack }: Props) {
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.timing(animatedValue, { toValue: Math.min(value / limit, 1), duration: 300, useNativeDriver: true }).start();
+    Animated.timing(animatedValue, { 
+      toValue: Math.min(value / limit, 1), 
+      duration: 300, 
+      useNativeDriver: true 
+    }).start();
   }, [value, limit]);
 
   const strokeDashoffset = animatedValue.interpolate({ inputRange: [0,1], outputRange: [circumference,0] });
@@ -32,12 +36,12 @@ export default function Sigarette({ goBack }: Props) {
 
   const updateValue = (newVal: number) => {
     setValue(newVal);
-    setCounters(prev => prev.map(c => c.label === 'Sigarette' ? { ...c, value: newVal } : c));
+    updateCounter('Sigarette', { value: newVal });
   };
 
   const confirmLimit = () => {
     setLimit(tempLimit);
-    setCounters(prev => prev.map(c => c.label === 'Sigarette' ? { ...c, limit: tempLimit } : c));
+    updateCounter('Sigarette', { limit: tempLimit });
     setEditingLimit(false);
     Keyboard.dismiss();
   };
@@ -62,14 +66,14 @@ export default function Sigarette({ goBack }: Props) {
               keyboardType="number-pad"
               autoFocus
               value={tempLimit.toString()}
-              onChangeText={t=>setTempLimit(Number(t))}
+              onChangeText={t => setTempLimit(Number(t))}
               returnKeyType="done"
               onSubmitEditing={confirmLimit}
             />
             <Button title="OK" onPress={confirmLimit} />
           </View>
         ) : (
-          <TouchableOpacity style={styles.limitTouchable} onPress={()=>setEditingLimit(true)}>
+          <TouchableOpacity style={styles.limitTouchable} onPress={() => setEditingLimit(true)}>
             <Text style={[styles.limitText,{color}]}>{limit}</Text>
           </TouchableOpacity>
         )}
@@ -78,12 +82,12 @@ export default function Sigarette({ goBack }: Props) {
       {overLimit && <Text style={styles.warningText}>Hai superato il limite!</Text>}
 
       <View style={styles.counterContainer}>
-        <Button title="-1" onPress={()=>updateValue(Math.max(value-1,0))} />
+        <Button title="-1" onPress={() => updateValue(Math.max(value-1,0))} />
         <Text style={styles.counterText}>{value}</Text>
-        <Button title="+1" onPress={()=>updateValue(value+1)} />
+        <Button title="+1" onPress={() => updateValue(value+1)} />
       </View>
 
-      
+     
     </KeyboardAvoidingView>
   );
 }

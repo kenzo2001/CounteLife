@@ -1,6 +1,7 @@
 // app/components/CounterCircle.tsx
+import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -12,6 +13,8 @@ type CounterCircleProps = {
 };
 
 export default function CounterCircle({ label, value, limit }: CounterCircleProps) {
+  const router = useRouter();
+
   const radius = 50;
   const strokeWidth = 10;
   const circumference = 2 * Math.PI * radius;
@@ -34,14 +37,25 @@ export default function CounterCircle({ label, value, limit }: CounterCircleProp
   const overLimit = value > limit;
   const color = overLimit ? '#ff5555' : '#4caf50';
 
+  // Mappiamo il label alla rotta corretta
+  const routeMap: { [key: string]: '/' | '/caffe' | '/sigarette' } = {
+    Caffe: '/caffe',
+    Sigarette: '/sigarette',
+  };
+
+  const handlePress = () => {
+    const route = routeMap[label];
+    if (route) router.push(route);
+  };
+
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={handlePress}>
       <Svg width={120} height={120}>
         <Circle
           cx={60}
           cy={60}
           r={radius}
-          stroke="#ddd"
+          stroke="#333"
           strokeWidth={strokeWidth}
           fill="none"
         />
@@ -61,12 +75,13 @@ export default function CounterCircle({ label, value, limit }: CounterCircleProp
         <Text style={[styles.valueText, { color }]}>{value}</Text>
         <Text style={styles.labelText}>{label}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
+
 const styles = StyleSheet.create({
   container: { margin: 0, alignItems: 'center', justifyContent: 'center' },
   textContainer: { position: 'absolute', alignItems: 'center', justifyContent: 'center', top: 40 },
-  valueText: { fontSize: 30, fontWeight: 'bold', color: '#FFFFFF' },  // numero dentro al cerchio bianco
-  labelText: { fontSize: 16, color: '#CCCCCC', marginTop: 42 },       // scritta sotto il cerchio grigio chiaro
+  valueText: { fontSize: 30, fontWeight: 'bold', color: '#FFFFFF' },
+  labelText: { fontSize: 16, color: '#CCCCCC', marginTop: 42 },
 });

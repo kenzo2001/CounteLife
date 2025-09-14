@@ -1,4 +1,4 @@
-// app/caffe.tsx
+// app/Caffe.tsx
 import { useContext, useEffect, useRef, useState } from 'react';
 import { Animated, Button, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
@@ -9,11 +9,11 @@ const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 type Props = { goBack: () => void };
 
 export default function Caffe({ goBack }: Props) {
-  const { counters, setCounters } = useContext(CountersContext);
+  const { counters, updateCounter } = useContext(CountersContext);
   const counter = counters.find(c => c.label === 'Caffe') as Counter;
 
   const [value, setValue] = useState(counter?.value || 0);
-  const [limit, setLimit] = useState(counter?.limit || 5);
+  const [limit, setLimit] = useState(counter?.limit || 20);
   const [editingLimit, setEditingLimit] = useState(false);
   const [tempLimit, setTempLimit] = useState(limit);
 
@@ -23,7 +23,11 @@ export default function Caffe({ goBack }: Props) {
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.timing(animatedValue, { toValue: Math.min(value / limit, 1), duration: 300, useNativeDriver: true }).start();
+    Animated.timing(animatedValue, { 
+      toValue: Math.min(value / limit, 1), 
+      duration: 300, 
+      useNativeDriver: true 
+    }).start();
   }, [value, limit]);
 
   const strokeDashoffset = animatedValue.interpolate({ inputRange: [0,1], outputRange: [circumference,0] });
@@ -32,12 +36,12 @@ export default function Caffe({ goBack }: Props) {
 
   const updateValue = (newVal: number) => {
     setValue(newVal);
-    setCounters(prev => prev.map(c => c.label === 'Caffe' ? { ...c, value: newVal } : c));
+    updateCounter('Caffe', { value: newVal });
   };
 
   const confirmLimit = () => {
     setLimit(tempLimit);
-    setCounters(prev => prev.map(c => c.label === 'Caffe' ? { ...c, limit: tempLimit } : c));
+    updateCounter('Caffe', { limit: tempLimit });
     setEditingLimit(false);
     Keyboard.dismiss();
   };
@@ -48,7 +52,7 @@ export default function Caffe({ goBack }: Props) {
 
       <View style={styles.circleContainer}>
         <Svg width={150} height={150}>
-          <Circle cx={75} cy={75} r={radius} stroke="#ffae00ff" strokeWidth={strokeWidth} fill="none" />
+          <Circle cx={75} cy={75} r={radius} stroke="#333" strokeWidth={strokeWidth} fill="none" />
           <AnimatedCircle
             cx={75} cy={75} r={radius} stroke={color} strokeWidth={strokeWidth} fill="none"
             strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round"
@@ -62,14 +66,14 @@ export default function Caffe({ goBack }: Props) {
               keyboardType="number-pad"
               autoFocus
               value={tempLimit.toString()}
-              onChangeText={t=>setTempLimit(Number(t))}
+              onChangeText={t => setTempLimit(Number(t))}
               returnKeyType="done"
               onSubmitEditing={confirmLimit}
             />
             <Button title="OK" onPress={confirmLimit} />
           </View>
         ) : (
-          <TouchableOpacity style={styles.limitTouchable} onPress={()=>setEditingLimit(true)}>
+          <TouchableOpacity style={styles.limitTouchable} onPress={() => setEditingLimit(true)}>
             <Text style={[styles.limitText,{color}]}>{limit}</Text>
           </TouchableOpacity>
         )}
@@ -78,12 +82,12 @@ export default function Caffe({ goBack }: Props) {
       {overLimit && <Text style={styles.warningText}>Hai superato il limite!</Text>}
 
       <View style={styles.counterContainer}>
-        <Button title="-1" onPress={()=>updateValue(Math.max(value-1,0))} />
+        <Button title="-1" onPress={() => updateValue(Math.max(value-1,0))} />
         <Text style={styles.counterText}>{value}</Text>
-        <Button title="+1" onPress={()=>updateValue(value+1)} />
+        <Button title="+1" onPress={() => updateValue(value+1)} />
       </View>
 
-     
+      
     </KeyboardAvoidingView>
   );
 }

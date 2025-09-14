@@ -1,0 +1,39 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-ios:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Login to Expo
+        run: eas login --non-interactive --username ${{ secrets.EXPO_USERNAME }} --password ${{ secrets.EXPO_PASSWORD }}
+
+      - name: Configure EAS Build
+        run: eas build:configure
+
+      - name: Build iOS Development Client
+        run: eas build --platform ios --profile development --non-interactive
+
+      - name: Upload IPA as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: LifeCounters-IPA
+          path: '**/*.ipa'

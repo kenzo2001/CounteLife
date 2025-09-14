@@ -1,0 +1,11 @@
+// eas.json
+{
+  "build": {
+    "development": {
+      "distribution": "internal",
+      "ios": {
+        "simulator": false
+      }
+    }
+  }
+}
