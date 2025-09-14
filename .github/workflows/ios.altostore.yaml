@@ -1,0 +1,49 @@
+name: Build iOS for AltStore
+
+on:
+  push:
+    branches:
+      - master  # o il branch che vuoi buildare
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}  # token Expo come secret
+    steps:
+      # 1. Checkout del repository
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # 2. Installa Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      # 3. Installa EAS CLI
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      # 4. Installa dipendenze progetto
+      - name: Install dependencies
+        run: npm install
+
+      # 5. Mostra login Expo
+      - name: Expo login check
+        run: eas whoami
+
+      # 6. Build iOS
+      - name: Build iOS App (development)
+        run: |
+          eas build --platform ios --profile development
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      # 7. Salva l’IPA come artifact
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-ipa
+          path: |
+            **/*.ipa

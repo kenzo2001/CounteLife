@@ -9,8 +9,8 @@
         "simulator": false
       }
     },
-    "production": {
-      "distribution": "store",
+    "preview": {
+      "distribution": "internal",
       "ios": {
         "simulator": false
       }

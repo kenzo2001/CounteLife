@@ -1,25 +1,30 @@
 workflows:
-  ios-build:
-    name: iOS Build
+  ios-altstore:
+    name: iOS AltStore Build
     environment:
       node: 20
       npm: 10.7.0
       xcode: 16.4
       groups:
-        - expo  # <-- qui specifichi il tuo gruppo expo
+        - expo  # il tuo gruppo che contiene EXPO_TOKEN
 
     scripts:
+      # 1. Installa EAS CLI
       - name: Install EAS CLI
         script: npm install -g eas-cli
 
+      # 2. Installa le dipendenze del progetto
       - name: Install dependencies
         script: npm install
 
-      - name: Login to Expo
-        script: eas whoami || eas login --token $EXPO_TOKEN
+      # 3. Mostra chi è loggato (EAS usa automaticamente EXPO_TOKEN dal group)
+      - name: Check Expo login
+        script: eas whoami
 
+      # 4. Build iOS IPA per AltStore
       - name: Build iOS App
-        script: eas build --platform ios --profile development --non-interactive
+        script: eas build --platform ios --profile development
+        # Nota: non mettere --non-interactive se account free
 
     artifacts:
       - '**/*.ipa'
